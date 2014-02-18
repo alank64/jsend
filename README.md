@@ -13,6 +13,7 @@ NOTE: based from Prestaul/jsend but added ability to hide errors (sent to consol
 var jsend = require('jsend')({hideErrors: true});
 ```
 
+Oh! still needs a little fine tuning so user beware!
 
 Response validation
 -------------------
