@@ -19,6 +19,7 @@ function allowKeys(keys, json) {
 function jsend(config, host) {
 	config = config || {};
 	host = host || {};
+  config.hideErrors = (config.hideErrors === undefined ? false : config.hideErrors);
 
 	function isValid(json) {
 		var spec = STATUSES[json && json.status],
@@ -75,6 +76,33 @@ function jsend(config, host) {
 		return json;
 	}
 
+  function build(err, json) {
+    var results = fromArguments(err, json);
+
+    if (config.hideErrors && results.status === 'error'){
+      // generate unique id for user, and console log the error
+      var buf = []
+        , chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        , charlen = chars.length
+        , len = 8;
+
+      for (var i = 0; i < len; ++i) {
+        buf.push(chars[getRandomInt(0, charlen - 1)]);
+      }
+
+      var uid = buf.join('');
+      
+      console.log("ERROR: code: ", uid, " is: ", JSON.stringify(results.data, null, 2));
+      delete(results.data);
+      results.code = uid;
+    }
+    return results;
+  }
+
+  function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
 	function callback(done) {
 		return function(json) {
 			forward(json, done);
@@ -91,6 +119,7 @@ function jsend(config, host) {
 	host.isValid = isValid;
 	host.forward = forward;
 	host.fromArguments = fromArguments;
+	host.build = build;
 	host.callback = callback;
 	host.responder = responder;
 	host.middleware = function(req, res, next) {

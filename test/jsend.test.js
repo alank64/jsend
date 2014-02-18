@@ -118,6 +118,72 @@ describe('jsend', function() {
 		});
 
 
+		describe('- build', function() {
+			describe('should generate "success"', function() {
+				it('with object data', function() {
+					var json = { status:'success', data:{ foo:'bar' } };
+					assert.deepEqual(jsendInstance.build(null, json.data), json);
+				});
+
+				it('with array data', function() {
+					var json = { status:'success', data:[1,2,3] };
+					assert.deepEqual(jsendInstance.build(null, json.data), json);
+				});
+
+				it('with string data', function() {
+					var json = { status:'success', data:'you got it' };
+					assert.deepEqual(jsendInstance.build(null, json.data), json);
+				});
+
+				it('with numeric data', function() {
+					var json = { status:'success', data:123 };
+					assert.deepEqual(jsendInstance.build(null, json.data), json);
+				});
+
+				it('with null data', function() {
+					var json = { status:'success', data:null };
+					assert.deepEqual(jsendInstance.build(null, json.data), json);
+				});
+			});
+
+			describe('should generate "error"', function() {
+				it('with error message as first arg', function() {
+					var json = { status:'error', message:'something bad' };
+					assert.deepEqual(jsendInstance.build(json.message), json);
+				});
+
+				it('with Error object as first arg', function() {
+					var json = { status:'error', message:'something bad' },
+						output = jsendInstance.build(new Error(json.message));
+					assert.isObject(output.data);
+					assert.isString(output.data.stack);
+					delete output.data;
+					assert.deepEqual(output, json);
+				});
+
+				it('with jsend error object as first arg', function() {
+					var json = { status:'error', message:'something bad' };
+					assert.deepEqual(jsendInstance.build(json), json);
+				});
+
+				it('with jsend fail object as first arg', function() {
+					var json = { status:'fail', data:{ something:'bad' } };
+					assert.deepEqual(jsendInstance.build(json), { status:'error', message:'Unknown error. (jsend)' });
+				});
+
+				it('with jsend fail object as first arg and preserve message', function() {
+					var json = { status:'fail', data:{ something:'bad' }, message:'Really bad!' };
+					assert.deepEqual(jsendInstance.build(json), { status:'error', message:'Really bad!' });
+				});
+
+				it('with jsend success object as first arg', function() {
+					var json = { status:'success', data:{ something:'bad' } };
+					assert.deepEqual(jsendInstance.build(json), { status:'error', message:'Unknown error. (jsend)' });
+				});
+			});
+		});
+
+
 
 		describe('- fromArguments', function() {
 			describe('should generate "success"', function() {
@@ -681,6 +747,26 @@ describe('jsend', function() {
 			});
 		});
 	}
+  function hiddenErrorTests(jsendInstance){
+    
+    describe('- build', function(){
+      describe('should hide error', function(){
+        it('should replace error with code', function(){
+          var err = new Error("ops!");
+
+          var results  = jsendInstance.build(err, null);
+          console.log(results);
+          assert.equal(results.code.length, 8);
+        
+        }); 
+        it('should return a normal result', function(){
+          
+
+        });
+      });
+
+    });
+  }
 
 	describe('without strict flag', function() {
 		var jsendInstance = jsend;
@@ -692,6 +778,11 @@ describe('jsend', function() {
 		var jsendInstance = jsend({ strict:true });
 
 		basicTests(jsendInstance);
+	});
+	describe('with hideErrors true flag', function() {
+		var jsendInstance = jsend({hideErrors: true });
+
+		hiddenErrorTests(jsendInstance);
 	});
 
 });
