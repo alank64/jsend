@@ -11,9 +11,11 @@ NOTE: based from Prestaul/jsend but added ability to hide errors (sent to consol
 
 ```js
 var jsend = require('jsend')({hideErrors: true});
+
+jsend.build(err, results);
 ```
 
-Oh! still needs a little fine tuning so user beware!
+Oh! still needs a little fine tuning so user beware! Also using build() as it's shorter then typing out fromArguments() each time.
 
 Response validation
 -------------------
