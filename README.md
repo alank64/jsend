@@ -7,6 +7,12 @@ Utilities to assist with sending and handling jsend responses.
 
 @TODO: middleware
 
+NOTE: based from Prestaul/jsend but added ability to hide errors (sent to console instead) with code: 4485d9 in json response for tracking. Like..
+
+```js
+var jsend = require('jsend')({hideErrors: true});
+```
+
 
 Response validation
 -------------------
