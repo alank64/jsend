@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git@github.com:Prestaul/jsend.git"
   },
+  "dependencies": {
+    "debug": "0.7.x"
+  },
   "devDependencies": {
     "jshint": "~2.1.11",
     "mocha": "~1.13.0",

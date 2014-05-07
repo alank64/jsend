@@ -1,3 +1,5 @@
+debug = require('debug')('v10data-rest_errors');
+
 var STATUSES = {
 	success: { required: ['status', 'data'], allowed:['status', 'data'] },
 	fail: { required: ['status', 'data'], allowed:['status', 'data'] },
@@ -92,7 +94,7 @@ function jsend(config, host) {
 
       var uid = buf.join('');
       
-      console.log("ERROR: code: ", uid, " is: ", JSON.stringify(results.data, null, 2));
+      debug("REST ERROR: code: %s IS: %s", uid, JSON.stringify(results.data, null, 2));
       delete(results.data);
       results.code = uid;
     }
